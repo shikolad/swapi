@@ -21,15 +21,14 @@ class MainActivity : AppCompatActivity() {
             data: SearchAnswer<Man>,
             call: Call<SearchAnswer<Man>>
         ) {
-            searchAdapter.data = data
-            nextAvailable = data.nextLink != null
-            prevAvailable = data.prevLink != null
+            onDataLoaded(data, call)
         }
 
         override fun onDataLoaded(data: SearchAnswer<Man>, call: Call<SearchAnswer<Man>>) {
             searchAdapter.data = data
             nextAvailable = data.nextLink != null
             prevAvailable = data.prevLink != null
+            (result.layoutManager as LinearLayoutManager).scrollToPosition(0)
         }
 
         override fun onFailedDataLoading(e: Throwable, call: Call<SearchAnswer<Man>>) {
