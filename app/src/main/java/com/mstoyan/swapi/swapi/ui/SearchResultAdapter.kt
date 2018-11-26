@@ -3,6 +3,7 @@ package com.mstoyan.swapi.swapi.ui
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mstoyan.swapi.swapi.R
 import com.mstoyan.swapi.swapi.network.services.Man
@@ -40,7 +41,11 @@ class SearchResultAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-        return data.count
+        return when {
+            data.error -> 1
+            data.result.size == 0 -> 1
+            else -> data.result.size
+        }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -54,8 +59,23 @@ class SearchResultAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 }
 
 class ManHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    private val name = itemView.findViewById<AppCompatTextView>(R.id.name)!!
+    private val height = itemView.findViewById<AppCompatTextView>(R.id.height)!!
+    private val mass = itemView.findViewById<AppCompatTextView>(R.id.mass)!!
+    private val hairColor = itemView.findViewById<AppCompatTextView>(R.id.hair_color)!!
+    private val skinColor = itemView.findViewById<AppCompatTextView>(R.id.skin_color)!!
+    private val eyeColor = itemView.findViewById<AppCompatTextView>(R.id.eye_color)!!
+    private val birthYear = itemView.findViewById<AppCompatTextView>(R.id.birth_year)!!
+    private val gender = itemView.findViewById<AppCompatTextView>(R.id.gender)!!
     fun bind(man: Man){
-
+        name.text = man.name
+        height.text = man.height
+        mass.text = man.mass
+        hairColor.text = man.hair_color
+        skinColor.text = man.skin_color
+        eyeColor.text = man.eye_color
+        birthYear.text = man.birth_year
+        gender.text = man.gender
     }
 }
 

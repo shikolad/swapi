@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Swapi</string>
+    <string name="ui_height">Height</string>
+    <string name="ui_mass">Mass</string>
+    <string name="ui_hair_color">Hair color</string>
+    <string name="ui_skin_color">Skin color</string>
+    <string name="ui_eye_color">Eye color</string>
+    <string name="ui_birth_year">Birth year</string>
+    <string name="ui_gender">Gender</string>
+    <string name="ui_next">Next</string>
+    <string name="ui_prev">Prev</string>
 </resources>

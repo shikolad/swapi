@@ -6,7 +6,6 @@ import android.text.TextWatcher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.mstoyan.swapi.swapi.R.id.result
 import com.mstoyan.swapi.swapi.network.NetworkManager
 import com.mstoyan.swapi.swapi.network.SwObserver
 import com.mstoyan.swapi.swapi.network.services.Man
@@ -22,20 +21,39 @@ class MainActivity : AppCompatActivity() {
             data: SearchAnswer<Man>,
             call: Call<SearchAnswer<Man>>
         ) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            searchAdapter.data = data
+            nextAvailable = data.nextLink != null
+            prevAvailable = data.prevLink != null
         }
 
         override fun onDataLoaded(data: SearchAnswer<Man>, call: Call<SearchAnswer<Man>>) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            searchAdapter.data = data
+            nextAvailable = data.nextLink != null
+            prevAvailable = data.prevLink != null
         }
 
         override fun onFailedDataLoading(e: Throwable, call: Call<SearchAnswer<Man>>) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            val result = SearchAnswer<Man>()
+            result.error = true
+            searchAdapter.data = result
+            nextAvailable = false
+            prevAvailable = false
         }
 
     }
 
     val searchAdapter = SearchResultAdapter()
+    var nextAvailable = false
+        set(value){
+            field = value
+            next.isEnabled = field
+        }
+    var prevAvailable = false
+        set(value) {
+            field = value
+            prev.isEnabled = field
+        }
+    var lastPage = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,20 +61,37 @@ class MainActivity : AppCompatActivity() {
 
         input.addTextChangedListener(object: TextWatcher{
             override fun afterTextChanged(s: Editable?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                //do nothing
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                //do nothing
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                input.postDelayed({
+                    lastPage = 1
+                    searchInfo()
+                }, 1000)
             }
         })
 
+        next.setOnClickListener {
+            lastPage++
+            searchInfo()
+        }
+
+        prev.setOnClickListener{
+            lastPage--
+            searchInfo()
+        }
+
         result.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         result.adapter = searchAdapter
+    }
+
+    private fun searchInfo() {
+        NetworkManager.ApiCalls.search(input.text.toString(), lastPage)
     }
 
     override fun onResume() {

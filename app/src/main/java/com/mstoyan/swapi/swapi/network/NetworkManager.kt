@@ -63,7 +63,7 @@ object NetworkManager {
     }
 
     object ApiCalls{
-        fun search(search: String, page: Int){
+        fun search(search: String, page: Int = 1){
             swApiService.searchPeopleByName(search, page).enqueue(Callbacks.searchPeopleCallback)
         }
     }
