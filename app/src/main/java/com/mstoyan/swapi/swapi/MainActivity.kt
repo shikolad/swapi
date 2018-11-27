@@ -6,9 +6,10 @@ import android.text.TextWatcher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.mstoyan.swapi.swapi.db.DBManager
 import com.mstoyan.swapi.swapi.network.NetworkManager
 import com.mstoyan.swapi.swapi.network.SwObserver
-import com.mstoyan.swapi.swapi.network.services.Man
+import com.mstoyan.swapi.swapi.network.services.Person
 import com.mstoyan.swapi.swapi.network.services.SearchAnswer
 import com.mstoyan.swapi.swapi.ui.SearchResultAdapter
 import kotlinx.android.synthetic.main.content_main.*
@@ -16,23 +17,25 @@ import retrofit2.Call
 
 class MainActivity : AppCompatActivity() {
 
-    private val peopleSearchObserver = object: SwObserver<SearchAnswer<Man>>() {
+    private val dbManager = DBManager()
+    private val peopleSearchObserver = object: SwObserver<SearchAnswer<Person>>() {
         override fun onCachedDataLoaded(
-            data: SearchAnswer<Man>,
-            call: Call<SearchAnswer<Man>>
+            data: SearchAnswer<Person>,
+            call: Call<SearchAnswer<Person>>
         ) {
             onDataLoaded(data, call)
         }
 
-        override fun onDataLoaded(data: SearchAnswer<Man>, call: Call<SearchAnswer<Man>>) {
+        override fun onDataLoaded(data: SearchAnswer<Person>, call: Call<SearchAnswer<Person>>) {
             searchAdapter.data = data
+            dbManager.insertPersons(data.result)
             nextAvailable = data.nextLink != null
             prevAvailable = data.prevLink != null
             (result.layoutManager as LinearLayoutManager).scrollToPosition(0)
         }
 
-        override fun onFailedDataLoading(e: Throwable, call: Call<SearchAnswer<Man>>) {
-            val result = SearchAnswer<Man>()
+        override fun onFailedDataLoading(e: Throwable, call: Call<SearchAnswer<Person>>) {
+            val result = SearchAnswer<Person>()
             result.error = true
             searchAdapter.data = result
             nextAvailable = false
@@ -90,16 +93,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun searchInfo() {
-        NetworkManager.ApiCalls.search(input.text.toString(), lastPage)
+        val searchString = input.text.toString()
+        if (searchString.isEmpty()){
+            searchAdapter.setPersons(dbManager.getAllPersons())
+        } else {
+            NetworkManager.ApiCalls.search(searchString, lastPage)
+        }
     }
 
     override fun onResume() {
         super.onResume()
         NetworkManager.registerPeopleSearchObserver(peopleSearchObserver)
+        dbManager.open(this)
+        searchInfo()
     }
 
     override fun onPause() {
         super.onPause()
         NetworkManager.unregisterPeopleSearchObserver(peopleSearchObserver)
+        dbManager.close()
     }
 }

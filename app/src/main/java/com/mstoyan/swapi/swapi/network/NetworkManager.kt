@@ -1,6 +1,6 @@
 package com.mstoyan.swapi.swapi.network
 
-import com.mstoyan.swapi.swapi.network.services.Man
+import com.mstoyan.swapi.swapi.network.services.Person
 import com.mstoyan.swapi.swapi.network.services.SearchAnswer
 import com.mstoyan.swapi.swapi.network.services.SwApi
 import okhttp3.HttpUrl
@@ -37,19 +37,19 @@ object NetworkManager {
     }
 
     private object Observers{
-        val searchPeopleSearchObservers = ArrayList<SwObserver<SearchAnswer<Man>>>()
+        val searchPeopleSearchObservers = ArrayList<SwObserver<SearchAnswer<Person>>>()
     }
 
     private object Callbacks{
-        val searchPeopleCallback = object: Callback<SearchAnswer<Man>>{
-            override fun onFailure(call: Call<SearchAnswer<Man>>, t: Throwable) {
+        val searchPeopleCallback = object: Callback<SearchAnswer<Person>>{
+            override fun onFailure(call: Call<SearchAnswer<Person>>, t: Throwable) {
                 for (observer in Observers.searchPeopleSearchObservers)
                     observer.onFailedDataLoading(t, call)
             }
 
             override fun onResponse(
-                call: Call<SearchAnswer<Man>>,
-                response: Response<SearchAnswer<Man>>
+                call: Call<SearchAnswer<Person>>,
+                response: Response<SearchAnswer<Person>>
             ) {
                 val result = response.body()
                 if (result == null){
@@ -68,13 +68,13 @@ object NetworkManager {
         }
     }
 
-    private val swApiService = Configurator.createService(SwApi::class.java)
+    val swApiService = Configurator.createService(SwApi::class.java)
 
-    fun registerPeopleSearchObserver(observer: SwObserver<SearchAnswer<Man>>){
+    fun registerPeopleSearchObserver(observer: SwObserver<SearchAnswer<Person>>){
         Observers.searchPeopleSearchObservers.add(observer)
     }
 
-    fun unregisterPeopleSearchObserver(observer: SwObserver<SearchAnswer<Man>>){
+    fun unregisterPeopleSearchObserver(observer: SwObserver<SearchAnswer<Person>>){
         Observers.searchPeopleSearchObservers.remove(observer)
     }
 }

@@ -10,7 +10,7 @@ interface SwApi {
     @GET("people/")
     fun searchPeopleByName(@Query("search") name: String,
                            @Query("page") page: Int = 1,
-                           @Query("format") resultType: String = "json"): Call<SearchAnswer<Man>>
+                           @Query("format") resultType: String = "json"): Call<SearchAnswer<Person>>
 }
 
 
@@ -26,7 +26,7 @@ class SearchAnswer<S>{
     var error = false
 }
 
-class Man{
+class Person{
     @SerializedName("name")
     var name = ""
     @SerializedName("birth_year")

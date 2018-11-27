@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.recyclerview.widget.RecyclerView
 import com.mstoyan.swapi.swapi.R
-import com.mstoyan.swapi.swapi.network.services.Man
+import com.mstoyan.swapi.swapi.network.services.Person
 import com.mstoyan.swapi.swapi.network.services.SearchAnswer
 
 class SearchResultAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -17,7 +17,7 @@ class SearchResultAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         const val HOLDER_EMPTY = 2
     }
 
-    var data = SearchAnswer<Man>()
+    var data = SearchAnswer<Person>()
         set(value){
             field = value
             notifyDataSetChanged()
@@ -56,6 +56,16 @@ class SearchResultAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             is StaticHolder -> {}
         }
     }
+
+    fun setPersons(people: List<Person>){
+        val answer = SearchAnswer<Person>()
+        answer.count = people.size
+        answer.nextLink = null
+        answer.prevLink = null
+        answer.error = false
+        answer.result.addAll(people)
+        data = answer
+    }
 }
 
 class ManHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -67,15 +77,15 @@ class ManHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val eyeColor = itemView.findViewById<AppCompatTextView>(R.id.eye_color)!!
     private val birthYear = itemView.findViewById<AppCompatTextView>(R.id.birth_year)!!
     private val gender = itemView.findViewById<AppCompatTextView>(R.id.gender)!!
-    fun bind(man: Man){
-        name.text = man.name
-        height.text = man.height
-        mass.text = man.mass
-        hairColor.text = man.hair_color
-        skinColor.text = man.skin_color
-        eyeColor.text = man.eye_color
-        birthYear.text = man.birth_year
-        gender.text = man.gender
+    fun bind(person: Person){
+        name.text = person.name
+        height.text = person.height
+        mass.text = person.mass
+        hairColor.text = person.hair_color
+        skinColor.text = person.skin_color
+        eyeColor.text = person.eye_color
+        birthYear.text = person.birth_year
+        gender.text = person.gender
     }
 }
 

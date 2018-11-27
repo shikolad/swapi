@@ -23,6 +23,5 @@ class ExampleUnitTest {
         assertNotNull(response.body())
         assertEquals(response.body()!!.count, 1)
         assertEquals(response.body()!!.result!!.size, 1)
-
     }
 }
